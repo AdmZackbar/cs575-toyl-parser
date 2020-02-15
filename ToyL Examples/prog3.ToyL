@@ -1,0 +1,12 @@
+
+procedure prog3 is
+  M,N,P: integer;
+begin
+  get (M);
+  get (N);
+  P:=-M-3+N/2*5;
+  put (M);
+  put (N);
+  put (P);
+end prog3;
+

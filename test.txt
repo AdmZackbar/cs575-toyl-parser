@@ -1,0 +1,5 @@
+prOcedure hello
+
+/* ignore this shit */ /* also ignore this */
+
+resume end

@@ -1,0 +1,29 @@
+
+procedure prog7 is
+
+type POINT is
+  record
+    x,y: integer;
+  end record;
+
+type BOX is
+  record
+    LowerLeft, UpperRight: POINT;
+  end record;
+
+B: BOX;
+
+function Square (z:BOX) return boolean is
+  deltaX, deltaY: integer;
+begin
+  deltaX := z.UpperRight.x - z.LowerLeft.x;
+  deltaY := z.UpperRight.y - z.LowerLeft.y;
+  return deltaX=deltaY;
+end Square;
+		
+begin
+  get (B.LowerLeft.x);  get (B.LowerLeft.y);
+  get (B.UpperRight.x); get (B.UpperRight.y);
+  put (if Square(B) then 1 else 0 end if);
+end prog7;
+

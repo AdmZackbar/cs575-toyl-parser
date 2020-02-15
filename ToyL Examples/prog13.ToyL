@@ -1,0 +1,14 @@
+
+procedure prog13 is
+  type A1 is array[1..10] of integer;
+  type A2 is array[1..10] of A1;
+  type A3 is array[1..10] of A2;
+  A: A3;
+  I,J,K: integer;
+begin
+  get(I); get(J); get(K);
+  get (A[I][J][K]);
+  get(I); get(J); get(K);
+  put (A[I][J][K]);
+end prog13;
+

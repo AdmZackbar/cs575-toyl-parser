@@ -1,0 +1,31 @@
+
+procedure prog15 is 
+
+  package P is
+    type T;
+    procedure Init (a: out T);
+    procedure Modify (a: in out T);
+    function Equals (a,b: in T) return boolean;
+  private
+    type T is boolean;
+    procedure Init (a: out T) is begin a:=true; end Init;
+    procedure Modify (a: in out T) is begin a:=not a; end Modify;
+    function Equals (a,b: in T) return boolean is begin return a=b; end Equals;
+  end P;
+
+  x,y: P.T;
+
+begin
+  P.Init (x);
+  P.Init (y);
+  if P.Equals (x,y) then put (1); else put (0); end if;
+  P.Modify (x);
+  if P.Equals (x,y) then put (1); else put (0); end if;
+  P.Modify (y);
+  if P.Equals (x,y) then put (1); else put (0); end if;
+  P.Modify (x);
+  if P.Equals (x,y) then put (1); else put (0); end if;
+  P.Modify (y);
+  if P.Equals (x,y) then put (1); else put (0); end if;
+end prog15;
+

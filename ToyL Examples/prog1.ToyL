@@ -1,0 +1,76 @@
+
+procedure prog1 is
+
+  package Q_Package is
+
+    type Queue;
+    procedure Init (Q:in out Queue);
+    function Empty (Q:Queue) return boolean;
+    function Full (Q:Queue) return boolean;
+    procedure Enqueue (x:in integer; Q:in out Queue);
+    procedure Dequeue (x:out integer; Q:in out Queue);
+
+  private
+
+    type Queue is
+      record
+	front, rear: integer;
+	data: array[0..9] of integer;
+      end record;
+
+    procedure Init (Q:in out Queue) is
+    begin
+      Q.front:=0;
+      Q.rear:=0;
+    end Init;
+
+    function Empty (Q:Queue) return boolean is
+    begin
+      return Q.front=Q.rear;
+    end Empty;
+
+    function Full (Q:Queue) return boolean is
+    begin
+      return (Q.front+1)%10=Q.rear;
+    end Full;
+
+    procedure Enqueue (x:in integer; Q:in out Queue) is
+    begin
+      if not Full(Q) then
+	Q.data[Q.front]:=x;
+	Q.front:=(Q.front+1)%10;
+      end if;
+    end Enqueue;
+
+    procedure Dequeue (x:out integer; Q:in out Queue) is
+    begin
+      if not Empty(Q) then
+	x:=Q.data[Q.rear];
+	Q.rear:=(Q.rear+1)%10;
+      end if;
+    end Dequeue;
+
+  end Q_Package;
+
+my_Q: Q_Package.Queue;
+Prime1, Prime2, Value: integer;
+
+begin	/* Main program fills a queue with random data for testing purposes. */
+
+    get (Prime1);
+    get (Prime2);
+    Value:=Prime1%Prime2;
+    Q_Package.Init(my_Q);
+
+    while not Q_Package.Full(my_Q) loop
+      Value:=Value*Prime1%Prime2;
+      Q_Package.Enqueue(Value,my_Q);
+    end loop;
+
+    while not Q_Package.Empty(my_Q) loop
+      Q_Package.Dequeue(Value,my_Q);
+      put (Value);
+    end loop;
+
+end prog1;
+

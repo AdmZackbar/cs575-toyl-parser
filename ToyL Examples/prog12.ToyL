@@ -1,0 +1,34 @@
+
+procedure prog12 is
+
+  a,b,c,d: integer;
+
+  procedure F (w,x,y,z: in out integer) is
+  begin
+    a:=6; b:=7; d:=8;
+    w:=9; x:=10; y:=11; z:=12;
+    put (a); put (w);
+  end F;
+
+  procedure G (p,q: in out integer);
+    a,d: integer;
+
+    procedure H (r,s,t: in out integer);
+    begin
+      d:=5;
+      F (c,r,s,t);
+      put (a); put(c); put(p); put(q);
+    end H;
+
+  begin
+    a:=4;
+    H (a,c,p);
+    put (q); put(d);
+  end G;
+
+begin
+  a:=1; b:=2; c:=3;
+  G (a,b);
+  put (b); put(d);
+end prog12;
+

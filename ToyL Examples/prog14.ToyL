@@ -1,0 +1,28 @@
+
+procedure prog14 is 
+
+  package P is
+    procedure Init;
+    procedure Inc;
+    procedure Dec;
+    function Count return integer;
+  private
+    Value: integer;
+    procedure Init is begin Value:=0; end Init;
+    procedure Inc is begin Value:=Value+1; end Inc;
+    procedure Dec is begin Value:=Value-1; end Dec;
+    function Count return integer is begin return Value; end Count;
+  end P;
+
+begin
+  P.Init; put (P.Count());
+  P.Inc; put (P.Count());
+  P.Inc; put (P.Count());
+  P.Dec; put (P.Count());
+  P.Inc; put (P.Count());
+  P.Inc; put (P.Count());
+  P.Dec; put (P.Count());
+  P.Inc; put (P.Count());
+  P.Inc; put (P.Count());
+end prog14;
+

@@ -1,0 +1,117 @@
+program : procedure
+
+procedure : PROCEDURE ID optFormalList IS declList BEGIN stmtList END ID SEMICOLON
+          | PROCEDURE ID optFormalList SEMICOLON
+
+function : FUNCTION ID optFormalList RETURN typeID IS declList BEGIN stmtList END ID SEMICOLON
+         | FUNCTION ID optFormalList RETURN typeID SEMICOLON
+
+optFormalList : OPAREN formalList CPAREN
+              | EMPTY
+
+formalList : formal SEMICOLON formalList
+           | formal
+
+formal : idList COLON optMode typeID
+
+idList : ID COMMA idList
+       | ID
+
+optMode : mode
+        | EMPTY
+
+mode : IN
+     | OUT
+     | IN OUT
+
+declList : declaration declList
+         | declaration
+
+declaration : typeDecl | varDecl | procedure | function | package
+
+package : PACKAGE ID IS declList PRIVATE declList END ID SEMICOLON
+
+typeDecl : TYPE ID IS typeDesc SEMICOLON
+         | TYPE ID SEMICOLON
+
+typeDesc : typeID
+         | ARRAY OBRACKET rExpr DOUBLE_DOT rExpr CBRACKET OF typeDesc
+         | RECORD varDeclList END RECORD
+
+varDeclList : varDecl varDeclList
+           | varDecl
+
+varDecl : idList COLON typeDesc SEMICOLON
+
+typeID : lExpr
+       | INTEGER
+       | BOOLEAN
+
+stmtList : statement stmtList
+         | statement
+
+statement : NULL SEMICOLON
+          | RETURN SEMICOLON
+          | RETURN rExpr SEMICOLON
+          | IF rExpr THEN stmtList optElsifList optElse END IF SEMICOLON
+          | WHILE rExpr LOOP stmtList END LOOP SEMICOLON
+          | lExpr OPAREN rExprList CPAREN SEMICOLON
+          | lExpr ASSIGNMENT rExpr SEMICOLON
+
+optElsifList : elsifList | EMPTY
+elsifList : elsif elsifList
+          | elsif
+elsif : ELSIF rExpr THEN stmtList
+
+optElse : ELSE stmtList | EMPTY
+
+rExprList : rExpr COMMA rExprList
+          | rExpr
+
+lExpr : ID
+      | lExpr OBRACKET rExpr CBRACKET
+      | lExpr DOT lExpr
+
+rExpr : rExpr2
+      | rExpr2 LOGICAL_OR rExpr
+
+rExpr2 : rExpr3
+       | rExpr3 LOGICAL_AND rExpr2
+
+rExpr3 : rExpr4
+       | NOT rExpr3
+
+rExpr4 : rExpr5
+       | rExpr5 EQUALS rExpr4
+       | rExpr5 NOT_EQUALS rExpr4
+
+rExpr5 : rExpr6
+       | rExpr6 LESS_THAN rExpr5
+       | rExpr6 GREATER_THAN rExpr5
+       | rExpr6 LESS_THAN_EQUAL rExpr5
+       | rExpr6 GREATER_THAN_EQUAL rExpr5
+
+rExpr6 : rExpr7
+       | rExpr7 PLUS rExpr6
+       | rExpr7 MINUS rExpr6
+
+rExpr7 : unary
+       | unary TIMES rExpr7
+       | unary DIVIDE rExpr7
+       | unary MODULUS rExpr7
+       | U_MINUS rExpr7
+
+unary : lExpr
+      | constant
+      | funcCall
+      | lExpr OPAREN rExprList CPAREN
+      | IF rExpr THEN rExpr optRExprElsifList ELSE rExpr END IF
+      | OPAREN rExpr CPAREN
+
+optRExprElsifList : rExprElsifList | EMPTY
+rExprElsifList : rExprElsif rExprElsifList
+               | rExprElsif
+rExprElsif : ELSIF rExpr THEN rExpr
+
+constant : number
+         | TRUE | FALSE

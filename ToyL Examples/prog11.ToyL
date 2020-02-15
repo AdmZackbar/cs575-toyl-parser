@@ -1,0 +1,23 @@
+
+procedure prog11 is
+
+  x: integer;
+  function F (y: integer) return integer;
+  function G (z: integer) return integer;
+
+  function F (y: integer) return integer is
+  begin
+    return if y=0 then 1 else F(y/2)+G(y/3) end if;
+  end F;
+
+  function G (z: integer) return integer is
+  begin
+    return if z=0 then 1 else F(z/3)+G(z/2) end if;
+  end G;
+
+begin
+  get (x);
+  put (F(x));
+  put (G(x));
+end prog11;
+

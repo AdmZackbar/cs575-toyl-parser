@@ -1,0 +1,16 @@
+
+procedure prog10 is
+
+  x: integer;
+
+  function count (x: integer) return integer is
+  /* sums the bits in the binary representation of x */
+  begin
+    return if x=0 then 0 elsif x%2=0 then count(x/2) else 1+count(x/2) end if;
+  end count;
+
+begin
+  get (x);
+  put (count(x));
+end prog10;
+

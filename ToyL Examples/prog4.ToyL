@@ -1,0 +1,56 @@
+
+procedure prog4 is
+
+  type ArrayType is array[1..10] of integer;
+
+  Data: ArrayType;
+  Prime1,Prime2,Last,M: integer;
+
+  procedure Quicksort (A: in out ArrayType; LB,UB: in integer) is
+  /* Quicksort sorts array A[LB..UB] into ascending order. */
+
+    I,J,M,Temp: integer;
+
+  begin
+
+    if LB<UB then
+      I:=LB+1; J:=UB; M:=A[LB];
+      while I<=J loop
+	if A[I]<=M then
+	  I:=I+1;
+	else
+	  Temp:=A[I]; A[I]:=A[J]; A[J]:=Temp;
+	  J:=J-1;
+	end if;
+      end loop;
+      if J=UB then
+	A[LB]:=A[UB]; A[UB]:=M;
+	I:=UB; J:=UB-1;
+      end if;
+      Quicksort(A,LB,J);
+      Quicksort(A,I,UB);
+    end if;
+
+  end Quicksort;
+
+begin
+
+  /* "enter two large prime numbers:" */
+  get (Prime1);
+  get (Prime2);
+  M:=1; Last:=Prime1%Prime2;
+  while M<=10 loop
+    Last:=Last*Prime1%Prime2;
+    Data[M]:=Last;
+    M:=M+1;
+  end loop;
+  Quicksort(Data,1,10);
+  /* "print 10 random numbers in sorted order:" */
+  M:=1;
+  while M<=10 loop
+    write(Data[M]);
+    M:=M+1;
+  end loop;
+
+end prog4;
+

@@ -1,0 +1,23 @@
+
+procedure prog6 is
+  type A is array [1..10] of integer;
+  I: integer;
+  X: A;
+begin
+  I:=1;
+  while I<=10 loop
+    X[I]:=0;
+    I:=I+1;
+  end loop;
+  get(I);
+  while I<>0 loop
+    get (X[I]);
+    get(I);
+  end loop;
+  get(I);
+  while I<>0 loop
+    put (X[I]);
+    get(I);
+  end loop;
+end prog6;
+

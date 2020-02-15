@@ -1,0 +1,19 @@
+
+procedure prog8 is
+
+n: integer;
+
+function Factorial (n: integer) return integer is
+begin
+  if n<=1 then
+    return 1;
+  else
+    return n*Factorial(n-1);
+  end if;
+end Factorial;
+
+begin
+  get (n);
+  put (Factorial(n));	 
+end prog8;
+

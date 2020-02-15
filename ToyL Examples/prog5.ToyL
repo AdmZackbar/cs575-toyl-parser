@@ -1,0 +1,15 @@
+
+procedure prog5 is
+  type R is record
+    A,B,C: integer;
+  end record;
+  X: R;
+begin
+  get (X.A);
+  get (X.B);
+  get (X.C);
+  put (X.A);
+  put (X.B);
+  put (X.C);
+end prog5;
+

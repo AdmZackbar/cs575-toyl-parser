@@ -1,0 +1,19 @@
+
+procedure prog9 is
+
+n: integer;
+
+function Fibonnacci (n: integer) return integer is
+begin
+  if n<=2 then
+    return 1;
+  else
+    return Fibonnacci(n-2) + Fibonnacci(n-1);
+  end if;
+end Fibonnacci;
+
+begin
+  get (n);
+  put (Fibonnacci(n));	 
+end prog9;
+
