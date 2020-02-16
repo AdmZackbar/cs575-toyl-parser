@@ -30,6 +30,9 @@ char *WHILE = "while";
 char *LOOP = "loop";
 char *TRUE = "true";
 char *FALSE = "false";
+char *NOT = "not";
+char *LOGICAL_AND = "and";
+char *LOGICAL_OR = "or";
 
 // Punctuation
 char *SEMICOLON = "semicolon";
@@ -50,13 +53,10 @@ char *MINUS = "minus";
 char *TIMES = "times";
 char *DIVIDE = "divide";
 char *MODULUS = "modulus";
-char *NOT = "not";
 char *LESS_THAN = "less than";
 char *GREATER_THAN = "greater than";
 char *LESS_THAN_EQUAL = "LTE";
 char *GREATER_THAN_EQUAL = "GTE";
-char *LOGICAL_AND = "logical and";
-char *LOGICAL_OR = "logical or";
 char *EQUALS = "equals";
 char *NOT_EQUALS = "not equals";
 

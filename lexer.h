@@ -3,6 +3,11 @@
 
 #include <stdio.h>
 
-extern char *getToken(FILE *fp);
+typedef struct lexer LEXER;
+
+extern LEXER *newLEXER(FILE *fp);
+extern char *getTokenString(LEXER *l);
+
+extern char *getToken(LEXER *l);
 
 #endif

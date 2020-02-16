@@ -17,12 +17,10 @@ formal : idList COLON optMode typeID
 idList : ID COMMA idList
        | ID
 
-optMode : mode
+optMode : IN
+        | OUT
+        | IN OUT
         | EMPTY
-
-mode : IN
-     | OUT
-     | IN OUT
 
 declList : declaration declList
          | declaration
@@ -69,8 +67,11 @@ rExprList : rExpr COMMA rExprList
           | rExpr
 
 lExpr : ID
-      | lExpr OBRACKET rExpr CBRACKET
-      | lExpr DOT lExpr
+      | ID lExpr2
+
+lExpr2 : OBRACKET rExpr CBRACKET lExpr2
+       | OBRACKET rExpr CBRACKET
+       | DOT lExpr
 
 rExpr : rExpr2
       | rExpr2 LOGICAL_OR rExpr
@@ -113,5 +114,9 @@ rExprElsifList : rExprElsif rExprElsifList
                | rExprElsif
 rExprElsif : ELSIF rExpr THEN rExpr
 
-constant : number
+constant : NUMBER
          | TRUE | FALSE
+
+funcCall : ID OPAREN optRExprList CPAREN
+
+optRExprList : rExprList | EMPTY
