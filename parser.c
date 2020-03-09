@@ -92,8 +92,8 @@ static int check(char *type)
 }
 static void match(char *type)
 {
-    //if (type == IDENTIFIER)
-    //    printf("ID: %s\n", getTokenString(l));
+    if (type == IDENTIFIER)
+        printf("ID: %s\n", getTokenString(l));
 
     if(check(type))
         return advance();
@@ -117,7 +117,7 @@ static void parse(char *filename)
 }
 static void failParse(char *component)
 {
-    printf("Incorrect structure in grammar module %s\n", component);
+    printf("Incorrect structure in grammar module %s, have token %s\n", component, current);
     exit(-404);
 }
 static void printInfo(char *symbol, char *definition)
@@ -126,19 +126,19 @@ static void printInfo(char *symbol, char *definition)
     {
         printf(" ");
     }
-    printf("%s -> %s\n", symbol, definition);
+    printf("%s --> %s\n", symbol, definition);
 }
 
 // GRAMMAR PARSING FUNCTIONS
 static void program()
 {
-    printInfo("program", "procedure");
+    printInfo("Program", "Procedure");
     procedure();
 }
 static void procedure()
 {
     depth++;
-    printInfo("procedure", "PROCEDURE ID optFormalList procedureEnd");
+    printInfo("Procedure", "PROCEDURE ID OptFormalList MoreProcedure");
     match(PROCEDURE);
     match(IDENTIFIER);
     optFormalList();
@@ -150,7 +150,7 @@ static void procedureEnd()
     depth++;
     if (check(IS))
     {
-        printInfo("procedureEnd", "IS declList BEGIN stmtList END ID SEMICOLON");
+        printInfo("MoreProcedure", "IS DeclList BEGIN StmtList END ID ;");
         advance();
         declList();
         match(BEGIN);
@@ -159,10 +159,14 @@ static void procedureEnd()
         match(IDENTIFIER);
         match(SEMICOLON);
     }
+    else if (check(SEMICOLON))
+    {
+        printInfo("ProcedureEnd", "SEMICOLON");
+        advance();
+    }
     else
     {
-        printInfo("procedureEnd", "SEMICOLON");
-        match(SEMICOLON);
+        failParse("Procedure");
     }
     depth--;
 }
@@ -173,7 +177,7 @@ static int procedurePending()
 static void function()
 {
     depth++;
-    printInfo("function", "FUNCTION ID optFormalList RETURN typeID functionEnd");
+    printInfo("Function", "FUNCTION ID OptFormalList RETURN TypeID MoreFunction");
     match(FUNCTION);
     match(IDENTIFIER);
     optFormalList();
@@ -187,7 +191,7 @@ static void functionEnd()
     depth++;
     if (check(IS))
     {
-        printInfo("functionEnd", "IS declList BEGIN stmtList END ID SEMICOLON");
+        printInfo("MoreFunction", "IS DeclList BEGIN StmtList END ID ;");
         advance();
         declList();
         match(BEGIN);
@@ -196,10 +200,14 @@ static void functionEnd()
         match(IDENTIFIER);
         match(SEMICOLON);
     }
+    else if (check(SEMICOLON))
+    {
+        printInfo("MoreFunction", ";");
+        advance();
+    }
     else
     {
-        printInfo("functionEnd", "SEMICOLON");
-        match(SEMICOLON);
+        failParse("function");
     }
     depth--;
 }
@@ -212,36 +220,42 @@ static void optFormalList()
     depth++;
     if (check(OPAREN))
     {
-        printInfo("optFormalList", "OPAREN formalList CPAREN");
+        printInfo("OptFormalList", "( FormalList )");
         advance();
         formalList();
         match(CPAREN);
     }
     else
     {
-        printInfo("optFormalList", "EMPTY");
+        printInfo("OptFormalList", "empty");
     }
     depth--;
 }
 static void formalList()
 {
     depth++;
-    printInfo("formalList", "formal formalListEnd");
+    printInfo("FormalList", "Formal MoreFormalList");
     formal();
     if (check(SEMICOLON))
     {
         depth++;
-        printInfo("formalListEnd", "SEMICOLON formalList");
+        printInfo("MoreFormalList", "; FormalList");
         advance();
         formalList();
         depth--;
     }
+	else
+	{
+		depth++;
+		printInfo("MoreFormalList", "empty");
+		depth--;
+	}
     depth--;
 }
 static void formal()
 {
     depth++;
-    printInfo("formal", "idList COLON optMode typeID");
+    printInfo("Formal", "IdList : OptMode TypeID");
     idList();
     match(COLON);
     optMode();
@@ -251,16 +265,22 @@ static void formal()
 static void idList()
 {
     depth++;
-    printInfo("idList", "ID idListEnd");
+    printInfo("IdList", "ID MoreIdList");
     match(IDENTIFIER);
     if (check(COMMA))
     {
         depth++;
-        printInfo("idListEnd", "COMMA idList");
+        printInfo("MoreIdList", ", idList");
         advance();
         idList();
         depth--;
     }
+	else
+	{
+		depth++;
+		printInfo("MoreIdList", "empty");
+		depth--;
+	}
     depth--;
 }
 static int idListPending()
@@ -275,36 +295,33 @@ static void optMode()
         advance();
         if (check(OUT))
         {
-            printInfo("optMode", "IN OUT");
+            printInfo("OptMode", "IN OUT");
             advance();
         }
         else
         {
-            printInfo("optMode", "IN");
+            printInfo("OptMode", "IN");
         }
     }
     if (check(OUT))
     {
-        printInfo("optMode", "OUT");
+        printInfo("OptMode", "OUT");
         advance();
     }
     else
     {
-        printInfo("optMode", "EMPTY");
+        printInfo("OptMode", "empty");
     }
     depth--;
 }
 static void declList()
 {
     depth++;
-    printInfo("declList", "declaration declListEnd");
-    declaration();
     if (declarationPending())
     {
-        depth++;
-        printInfo("declListEnd", "declList");
+        printInfo("DeclList", "Declaration DeclList");
+        declaration();
         declList();
-        depth--;
     }
     depth--;
 }
@@ -313,28 +330,32 @@ static void declaration()
     depth++;
     if (typeDeclPending())
     {
-        printInfo("declaration", "typeDecl");
+        printInfo("Declaration", "TypeDecl");
         typeDecl();
     }
     else if (varDeclPending())
     {
-        printInfo("declaration", "varDecl");
+        printInfo("Declaration", "VarDecl");
         varDecl();
     }
     else if (procedurePending())
     {
-        printInfo("declaration", "procedure");
+        printInfo("Declaration", "Procedure");
         procedure();
     }
     else if (functionPending())
     {
-        printInfo("declaration", "function");
+        printInfo("Declaration", "Function");
         function();
     }
     else if (packagePending())
     {
-        printInfo("declaration", "package");
+        printInfo("Declaration", "Package");
         package();
+    }
+    else
+    {
+        failParse("Declaration");
     }
     depth--;
 }
@@ -342,10 +363,11 @@ static int declarationPending()
 {
     return typeDeclPending() || varDeclPending() || procedurePending() || functionPending() || packagePending();
 }
+// TODO: check if private is optional and if decllists are optional
 static void package()
 {
     depth++;
-    printInfo("package", "PACKAGE ID IS declList PRIVATE declList END ID SEMICOLON");
+    printInfo("Package", "PACKAGE ID IS DeclList PRIVATE DeclList END ID ;");
     match(PACKAGE);
     match(IDENTIFIER);
     match(IS);
@@ -364,24 +386,28 @@ static int packagePending()
 static void typeDecl()
 {
     depth++;
-    printInfo("typeDecl", "TYPE ID typeDeclEnd");
+    printInfo("TypeDecl", "TYPE ID MoreTypeDecl");
     match(TYPE);
     match(IDENTIFIER);
     if (check(IS))
     {
         depth++;
-        printInfo("typeDeclEnd", "IS typeDesc SEMICOLON");
+        printInfo("MoreTypeDecl", "IS TypeDesc ;");
         advance();
         typeDesc();
         match(SEMICOLON);
         depth--;
     }
-    else
+    else if (check(SEMICOLON))
     {
         depth++;
-        printInfo("typeDesclEnd", "SEMICOLON");
-        match(SEMICOLON);
+        printInfo("MoreTypeDecl", ";");
+        advance();
         depth--;
+    }
+    else
+    {
+        failParse("TypeDecl");
     }
     depth--;
 }
@@ -394,12 +420,12 @@ static void typeDesc()
     depth++;
     if (typeIDPending())
     {
-        printInfo("typeDesc", "typeID");
+        printInfo("TypeDesc", "TypeID");
         typeID();
     }
     else if (check(ARRAY))
     {
-        printInfo("typeDesc", "ARRAY OBRACKET rExpr DOUBLE_DOT rExpr CBRACKET OF typeDesc");
+        printInfo("TypeDesc", "ARRAY [ RExpr .. RExpr ] OF TypeDesc");
         advance();
         match(OBRACKET);
         rExpr();
@@ -409,13 +435,17 @@ static void typeDesc()
         match(OF);
         typeDesc();
     }
-    else
+    else if (check(RECORD))
     {
-        printInfo("typeDesc", "RECORD varDeclList END RECORD");
-        match(RECORD);
+        printInfo("TypeDesc", "RECORD VarDeclList END RECORD");
+        advance();
         varDeclList();
         match(END);
         match(RECORD);
+    }
+    else
+    {
+        failParse("TypeDesc");
     }
     depth--;
 }
@@ -426,12 +456,12 @@ static int typeDescPending()
 static void varDeclList()
 {
     depth++;
-    printInfo("varDeclList", "varDecl varDeclListEnd");
+    printInfo("VarDeclList", "VarDecl VarDeclListEnd");
     varDecl();
     if (varDeclPending())
     {
         depth++;
-        printInfo("varDeclListEnd", "varDeclList");
+        printInfo("VarDeclListEnd", "VarDeclList");
         varDeclList();
         depth--;
     }
@@ -440,7 +470,7 @@ static void varDeclList()
 static void varDecl()
 {
     depth++;
-    printInfo("varDecl", "idList COLON typeDesc SEMICOLON");
+    printInfo("VarDecl", "IdList : TypeDesc ;");
     idList();
     match(COLON);
     typeDesc();
@@ -456,18 +486,22 @@ static void typeID()
     depth++;
     if (lExprPending())
     {
-        printInfo("typeID", "lExpr");
+        printInfo("TypeID", "LExpr");
         lExpr();
     }
     else if (check(INTEGER))
     {
-        printInfo("typeID", "INTEGER");
+        printInfo("TypeID", "INTEGER");
+        advance();
+    }
+    else if (check(BOOLEAN))
+    {
+        printInfo("TypeID", "BOOLEAN");
         advance();
     }
     else
     {
-        printInfo("typeID", "BOOLEAN");
-        match(BOOLEAN);
+        failParse("TypeID");
     }
     depth--;
 }
@@ -478,23 +512,29 @@ static int typeIDPending()
 static void stmtList()
 {
     depth++;
-    printInfo("stmtList", "statement stmtListEnd");
+    printInfo("StmtList", "Statement MoreStmtList");
     statement();
     if (statementPending())
     {
         depth++;
-        printInfo("stmtListEnd", "stmtList");
+        printInfo("MoreStmtList", "StmtList");
         stmtList();
         depth--;
     }
+	else
+	{
+		depth++;
+		printInfo("MoreStmtList", "empty");
+		depth--;
+	}
     depth--;
 }
 static void statement()
 {
     depth++;
-    if (check(NULL))
+    if (check(NULL_WORD))
     {
-        printInfo("statement", "NULL SEMICOLON");
+        printInfo("Statement", "NULL ;");
         advance();
         match(SEMICOLON);
     }
@@ -503,19 +543,23 @@ static void statement()
         advance();
         if (check(SEMICOLON))
         {
-            printInfo("statement", "RETURN SEMICOLON");
+            printInfo("Statement", "RETURN ;");
             advance();
+        }
+        else if (rExprPending())
+        {
+            printInfo("Statement", "RETURN RExpr ;");
+            rExpr();
+            match(SEMICOLON);
         }
         else
         {
-            printInfo("statement", "RETURN rExpr SEMICOLON");
-            rExpr();
-            match(SEMICOLON);
+            failParse("Return Statement");
         }
     }
     else if (check(IF))
     {
-        printInfo("statement", "IF rExpr THEN stmtList optElsifList optElse END IF SEMICOLON");
+        printInfo("Statement", "IF RExpr THEN StmtList OptElsifList OptElse END IF ;");
         advance();
         rExpr();
         match(THEN);
@@ -528,7 +572,7 @@ static void statement()
     }
     else if (check(WHILE))
     {
-        printInfo("statement", "WHILE rExpr LOOP stmtList END LOOP SEMICOLON");
+        printInfo("Statement", "WHILE RExpr LOOP StmtList END LOOP ;");
         advance();
         rExpr();
         match(LOOP);
@@ -537,59 +581,78 @@ static void statement()
         match(LOOP);
         match(SEMICOLON);
     }
-    else
+    else if (lExprPending())
     {
-        printInfo("statement", "lExpr statementEnd");
+        printInfo("Statement", "LExpr MoreStatement");
         lExpr();
         if (check(OPAREN))
         {
-            printInfo("statementEnd", "OPAREN rExprList CPAREN SEMICOLON");
+            printInfo("MoreStatement", "( RExprList ) ;");
             advance();
             rExprList();
             match(CPAREN);
             match(SEMICOLON);
         }
-        else
+        else if (check(ASSIGNMENT))
         {
-            printInfo("statementEnd", "ASSIGNMENT rExpr SEMICOLON");
-            match(ASSIGNMENT);
+            printInfo("MoreStatement", ":= RExpr ;");
+            advance();
             rExpr();
             match(SEMICOLON);
         }
+        else
+        {
+            failParse("LExpr Statement");
+        }
+    }
+    else
+    {
+        failParse("Statement");
     }
     depth--;
 }
+// TODO check if NULL works
 static int statementPending()
 {
-    return check(NULL) || check(RETURN) || check(IF) || check(WHILE) || lExprPending();
+    return check(NULL_WORD) || check(RETURN) || check(IF) || check(WHILE) || lExprPending();
 }
 static void optElsifList()
 {
     depth++;
     if (elsifPending())
     {
-        printInfo("optElsifList", "elsifList");
+        printInfo("OptElsifList", "ElsifList");
         elsifList();
     }
+	else
+	{
+		printInfo("OptElsifList", "empty");
+	}
     depth--;
 }
 static void elsifList()
 {
     depth++;
-    printInfo("elsifList", "elsif elsifListEnd");
+    printInfo("ElsifList", "Elsif MoreElsifList");
     elsif();
     if (elsifPending())
     {
         depth++;
-        printInfo("elsifListEnd", "elsifList");
+        printInfo("MoreElsifList", "ElsifList");
         depth--;
     }
+	else
+	{
+		depth++;
+		printInfo("MoreElsifList", "empty");
+		depth--;
+	}
     depth--;
 }
 static void elsif()
 {
     depth++;
-    printInfo("elsif", "ELSIF rExpr THEN stmtList");
+    printInfo("Elsif", "ELSIF RExpr THEN StmtList");
     match(ELSIF);
     rExpr();
     match(THEN);
@@ -605,29 +668,35 @@ static void optElse()
     depth++;
     if (check(ELSE))
     {
-        printInfo("optElse", "ELSE stmtList");
+        printInfo("OptElse", "ELSE StmtList");
         advance();
         stmtList();
     }
     else
     {
-        printInfo("optElse", "EMPTY");
+        printInfo("OptElse", "empty");
     }
     depth--;
 }
 static void rExprList()
 {
     depth++;
-    printInfo("rExprList", "rExpr rExprListEnd");
+    printInfo("RExprList", "RExpr MoreRExprList");
     rExpr();
     if (check(COMMA))
     {
         depth++;
-        printInfo("rExprListEnd", "COMMA rExprList");
+        printInfo("MoreRExprList", "COMMA rExprList");
         advance();
         rExprList();
         depth--;
     }
+	else
+	{
+		depth++;
+		printInfo("MoreRExprList", "empty");
+		depth--;
+	}
     depth--;
 }
 static void lExpr()
@@ -636,12 +705,12 @@ static void lExpr()
     match(IDENTIFIER);
     if (lExpr2Pending())
     {
-        printInfo("lExpr", "ID lExpr2");
+        printInfo("LExpr", "ID LExpr2");
         lExpr2();
     }
     else
     {
-        printInfo("lExpr", "ID");
+        printInfo("LExpr", "ID");
     }
     depth--;
 }
@@ -654,25 +723,33 @@ static void lExpr2()
     depth++;
     if (check(OBRACKET))
     {
-        printInfo("lExpr2", "OBRACKET rExpr CBRACKET lExpr2End");
+        printInfo("LExpr2", "[ RExpr ] MoreLExpr2");
         advance();
         rExpr();
         match(CBRACKET);
         if (lExpr2Pending())
         {
-            printInfo("lExpr2End", "lExpr2");
+			depth++;
+            printInfo("MoreLExpr2", "LExpr2");
             lExpr2();
+			depth--;
         }
         else
         {
-            printInfo("lExpr2End", "EMPTY");
+			depth++;
+            printInfo("MoreLExpr2", "empty");
+			depth--;
         }
+    }
+    else if (check(DOT))
+    {
+        printInfo("LExpr2", ". LExpr");
+        advance();
+        lExpr();
     }
     else
     {
-        printInfo("lExpr2", "DOT lExpr");
-        match(DOT);
-        lExpr();
+        failParse("LExpr2");
     }
     depth--;
 }
@@ -683,17 +760,21 @@ static int lExpr2Pending()
 static void rExpr()
 {
     depth++;
-    printInfo("rExpr", "rExpr2 rExprEnd");
+    printInfo("RExpr", "RExpr2 MoreRExpr");
     rExpr2();
     if (check(LOGICAL_OR))
     {
-        printInfo("rExprEnd", "LOGICAL_OR rExpr");
+		depth++;
+        printInfo("MoreRExpr", "OR rExpr");
         advance();
         rExpr();
+		depth--;
     }
     else
     {
-        printInfo("rExprEnd", "EMPTY");
+		depth++;
+        printInfo("MoreRExpr", "empty");
+		depth--;
     }
     depth--;
 }
@@ -704,18 +785,20 @@ static int rExprPending()
 static void rExpr2()
 {
     depth++;
-    printInfo("rExpr2", "rExpr3 rExpr2End");
+    printInfo("RExpr2", "RExpr3 MoreRExpr2");
     rExpr3();
+	depth++;
     if (check(LOGICAL_AND))
     {
-        printInfo("rExpr2End", "LOGICAL_AND rExpr2");
+        printInfo("MoreRExpr2", "AND RExpr2");
         advance();
         rExpr2();
     }
     else
     {
-        printInfo("rExpr2End", "EMPTY");
+        printInfo("MoreRExpr2", "empty");
     }
+	depth--;
     depth--;
 }
 static void rExpr3()
@@ -723,13 +806,13 @@ static void rExpr3()
     depth++;
     if (check(NOT))
     {
-        printInfo("rExpr3", "NOT rExpr3");
+        printInfo("RExpr3", "NOT RExpr3");
         advance();
         rExpr3();
     }
     else
     {
-        printInfo("rExpr3", "rExpr4");
+        printInfo("RExpr3", "RExpr4");
         rExpr4();
     }
     depth--;
@@ -737,82 +820,88 @@ static void rExpr3()
 static void rExpr4()
 {
     depth++;
-    printInfo("rExpr4", "rExpr5 rExpr4End");
+    printInfo("RExpr4", "RExpr5 MoreRExpr4");
     rExpr5();
+	depth++;
     if (check(EQUALS))
     {
-        printInfo("rExpr4End", "EQUALS rExpr4");
+        printInfo("MoreRExpr4", "= RExpr4");
         advance();
         rExpr4();
     }
     else if (check(NOT_EQUALS))
     {
-        printInfo("rExpr4End", "NOT_EQUALS rExpr4");
+        printInfo("MoreRExpr4", "<> RExpr4");
         advance();
         rExpr4();
     }
     else
     {
-        printInfo("rExpr4End", "EMPTY");
+        printInfo("MoreRExpr4", "empty");
     }
+	depth--;
     depth--;
 }
 static void rExpr5()
 {
     depth++;
-    printInfo("rExpr5", "rExpr6 rExpr5End");
+    printInfo("RExpr5", "RExpr6 MoreRExpr5");
     rExpr6();
+	depth++;
     if (check(LESS_THAN))
     {
-        printInfo("rExpr5End", "LESS_THAN rExpr5");
+        printInfo("MoreRExpr5", "< RExpr5");
         advance();
         rExpr5();
     }
     else if (check(LESS_THAN_EQUAL))
     {
-        printInfo("rExpr5End", "LESS_THAN_EQUAL rExpr5");
+        printInfo("MoreRExpr5", "<= RExpr5");
         advance();
         rExpr5();
     }
     else if (check(GREATER_THAN))
     {
-        printInfo("rExpr5End", "GREATER_THAN rExpr5");
+        printInfo("MoreRExpr5", "> RExpr5");
         advance();
         rExpr5();
     }
     else if (check(GREATER_THAN_EQUAL))
     {
-        printInfo("rExpr5End", "GREATER_THAN_EQUAL rExpr5");
+        printInfo("MoreRExpr5", ">= RExpr5");
         advance();
         rExpr5();
     }
     else
     {
-        printInfo("rExpr5End", "EMPTY");
+        printInfo("MoreRExpr5", "empty");
     }
+	depth--;
     depth--;
 }
 static void rExpr6()
 {
     depth++;
-    printInfo("rExpr6", "rExpr7 rExpr6End");
+    printInfo("RExpr6", "RExpr7 MoreRExpr6");
     rExpr7();
+	depth++;
     if (check(PLUS))
     {
-        printInfo("rExpr6End", "PLUS rExpr6");
+        printInfo("MoreRExpr6", "PLUS RExpr6");
         advance();
         rExpr6();
     }
     else if (check(MINUS))
     {
-        printInfo("rExpr6End", "MINUS rExpr6");
+        printInfo("MoreRExpr6", "MINUS RExpr6");
         advance();
         rExpr6();
     }
     else
     {
-        printInfo("rExpr6End", "EMPTY");
+        printInfo("MoreRExpr6", "empty");
     }
+	depth--;
     depth--;
 }
 static void rExpr7()
@@ -820,36 +909,38 @@ static void rExpr7()
     depth++;
     if (check(MINUS))
     {
-        printInfo("rExpr7", "U_MINUS rExpr7");
+        printInfo("RExpr7", "U_MINUS RExpr7");
         advance();
         rExpr7();
     }
     else
     {
-        printInfo("rExpr7", "unary rExpr7End");
+        printInfo("RExpr7", "Unary MoreRExpr7");
         unary();
+		depth++;
         if (check(TIMES))
         {
-            printInfo("rExpr7End", "TIMES rExpr7");
+            printInfo("MoreRExpr7", "TIMES RExpr7");
             advance();
             rExpr7();
         }
         else if (check(DIVIDE))
         {
-            printInfo("rExpr7End", "DIVIDE rExpr7");
+            printInfo("MoreRExpr7", "DIVIDE RExpr7");
             advance();
             rExpr7();
         }
         else if (check(MODULUS))
         {
-            printInfo("rExpr7End", "MODULUS rExpr7");
+            printInfo("MoreRExpr7", "MODULUS RExpr7");
             advance();
             rExpr7();
         }
         else
         {
-            printInfo("rExpr7End", "EMPTY");
+            printInfo("MoreRExpr7", "empty");
         }
+		depth--;
     }
     depth--;
 }
@@ -858,32 +949,40 @@ static void unary()
     depth++;
     if (lExprPending())
     {
-        printInfo("unary", "lExpr unaryEnd");
+        printInfo("Unary", "LExpr MoreUnary");
         lExpr();
         if (check(OPAREN))
         {
             depth++;
-            printInfo("unaryEnd", "OPAREN rExprList CPAREN");
+            printInfo("MoreUnary", "( rExprList )");
             advance();
             rExprList();
             match(CPAREN);
             depth--;
         }
+		else
+		{
+			depth++;
+			printInfo("MoreUnary", "empty");
+			depth--;
+		}
     }
     else if (constantPending())
     {
-        printInfo("unary", "constant");
+        printInfo("Unary", "Constant");
         constant();
     }
     else if (funcCallPending())
     {
-        printInfo("unary", "funcCall");
+        printInfo("Unary", "FuncCall");
         funcCall();
     }
     else if (check(IF))
     {
-        printInfo("unary", "IF rExpr THEN rExpr optRExprElsifList ELSE rExpr END IF");
+        printInfo("Unary", "IF RExpr THEN RExpr OptRExprElsifList ELSE RExpr END IF");
         advance();
+        rExpr();
+        match(THEN);
         rExpr();
         optRExprElsifList();
         match(ELSE);
@@ -891,12 +990,16 @@ static void unary()
         match(END);
         match(IF);
     }
-    else
+    else if (check(OPAREN))
     {
-        printInfo("unary", "OPAREN rExpr CPAREN");
+        printInfo("Unary", "( RExpr )");
         match(OPAREN);
         rExpr();
         match(CPAREN);
+    }
+    else
+    {
+        failParse("Unary");
     }
     depth--;
 }
@@ -909,23 +1012,23 @@ static void optRExprElsifList()
     depth++;
     if (elsifPending())
     {
-        printInfo("optRExprElsifList", "rExprElsifList");
+        printInfo("OptRExprElsifList", "RExprElsifList");
         rExprElsifList();
     }
     else
     {
-        printInfo("optRExprElsifList", "EMPTY");
+        printInfo("OptRExprElsifList", "empty");
     }
     depth--;
 }
 static void rExprElsifList()
 {
     depth++;
-    printInfo("rExprElsifList", "rExprElsif rExprElsifListEnd");
+    printInfo("RExprElsifList", "RExprElsif RExprElsifListEnd");
     rExprElsif();
     if (elsifPending())
     {
-        printInfo("rExprElsifListEnd", "rExprElsifList");
+        printInfo("RExprElsifListEnd", "RExprElsifList");
         rExprElsifList();
     }
     depth--;
@@ -933,7 +1036,7 @@ static void rExprElsifList()
 static void rExprElsif()
 {
     depth++;
-    printInfo("rExprElsif", "ELSIF rExpr THEN rExpr");
+    printInfo("RExprElsif", "ELSIF RExpr THEN RExpr");
     match(ELSIF);
     rExpr();
     match(THEN);
@@ -945,18 +1048,22 @@ static void constant()
     depth++;
     if (check(NUMBER))
     {
-        printInfo("constant", "NUMBER");
+        printInfo("Constant", "<number>");
         advance();
     }
     else if (check(TRUE))
     {
-        printInfo("constant", "TRUE");
+        printInfo("Constant", "TRUE");
+        advance();
+    }
+    else if (check(FALSE))
+    {
+        printInfo("Constant", "FALSE");
         advance();
     }
     else
     {
-        printInfo("constant", "FALSE");
-        match(FALSE);
+        failParse("Constant");
     }
     depth--;
 }
@@ -967,7 +1074,7 @@ static int constantPending()
 static void funcCall()
 {
     depth++;
-    printInfo("funcCall", "ID OPAREN optRExprList CPAREN");
+    printInfo("FuncCall", "ID ( OptRExprList )");
     match(IDENTIFIER);
     match(OPAREN);
     optRExprList();
@@ -983,12 +1090,12 @@ static void optRExprList()
     depth++;
     if (rExprPending())
     {
-        printInfo("optRExprList", "rExprList");
+        printInfo("OptRExprList", "RExprList");
         rExprList();
     }
     else
     {
-        printInfo("optRExprList", "EMPTY");
+        printInfo("OptRExprList", "empty");
     }
     depth--;
 }

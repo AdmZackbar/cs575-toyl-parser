@@ -23,7 +23,7 @@ optMode : IN
         | EMPTY
 
 declList : declaration declList
-         | declaration
+         | EMPTY
 
 declaration : typeDecl | varDecl | procedure | function | package
 

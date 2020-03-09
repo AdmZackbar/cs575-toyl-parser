@@ -58,6 +58,8 @@ static void skipBlockComment(FILE *fp)
             ch = fgetc(fp);
             if (ch == '/')
                 break;
+			else if (ch == '*')
+				ungetc(ch, fp);
         }
         ch = fgetc(fp);
     }
