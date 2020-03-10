@@ -148,14 +148,14 @@ char *getToken(LEXER *l)
                 return LESS_THAN_EQUAL;
             if (ch == '>')
                 return NOT_EQUALS;
-            if (ch += EOF)
+            if (ch != EOF)
                 ungetc(ch, l->fp);
             return LESS_THAN;
         case '>':
             ch = fgetc(l->fp);
             if (ch == '=')
                 return GREATER_THAN_EQUAL;
-            if (ch += EOF)
+            if (ch != EOF)
                 ungetc(ch, l->fp);
             return GREATER_THAN;
         default:

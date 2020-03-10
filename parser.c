@@ -85,6 +85,7 @@ static void advance()
 {
     char *prev = current;
     current = getToken(l);
+    //printf("New token: %s", current);
 }
 static int check(char *type)
 {
@@ -92,8 +93,8 @@ static int check(char *type)
 }
 static void match(char *type)
 {
-    if (type == IDENTIFIER)
-        printf("ID: %s\n", getTokenString(l));
+    //if (type == IDENTIFIER)
+    //    printf("ID: %s\n", getTokenString(l));
 
     if(check(type))
         return advance();
