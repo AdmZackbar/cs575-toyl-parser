@@ -85,7 +85,7 @@ static void advance()
 {
     char *prev = current;
     current = getToken(l);
-    //printf("New token: %s", current);
+    //printf("New token: %s\n", current);
 }
 static int check(char *type)
 {
@@ -323,6 +323,10 @@ static void declList()
         printInfo("DeclList", "Declaration DeclList");
         declaration();
         declList();
+    }
+    else
+    {
+        printInfo("DeclList", "empty");
     }
     depth--;
 }
@@ -888,13 +892,13 @@ static void rExpr6()
 	depth++;
     if (check(PLUS))
     {
-        printInfo("MoreRExpr6", "PLUS RExpr6");
+        printInfo("MoreRExpr6", "+ RExpr6");
         advance();
         rExpr6();
     }
     else if (check(MINUS))
     {
-        printInfo("MoreRExpr6", "MINUS RExpr6");
+        printInfo("MoreRExpr6", "- RExpr6");
         advance();
         rExpr6();
     }
@@ -910,7 +914,7 @@ static void rExpr7()
     depth++;
     if (check(MINUS))
     {
-        printInfo("RExpr7", "U_MINUS RExpr7");
+        printInfo("RExpr7", "- RExpr7");
         advance();
         rExpr7();
     }
@@ -921,19 +925,19 @@ static void rExpr7()
 		depth++;
         if (check(TIMES))
         {
-            printInfo("MoreRExpr7", "TIMES RExpr7");
+            printInfo("MoreRExpr7", "* RExpr7");
             advance();
             rExpr7();
         }
         else if (check(DIVIDE))
         {
-            printInfo("MoreRExpr7", "DIVIDE RExpr7");
+            printInfo("MoreRExpr7", "/ RExpr7");
             advance();
             rExpr7();
         }
         else if (check(MODULUS))
         {
-            printInfo("MoreRExpr7", "MODULUS RExpr7");
+            printInfo("MoreRExpr7", "% RExpr7");
             advance();
             rExpr7();
         }
