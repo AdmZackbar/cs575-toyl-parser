@@ -15,14 +15,14 @@ procedure prog14 is
   end P;
 
 begin
-  P.Init; put (P.Count());
-  P.Inc; put (P.Count());
-  P.Inc; put (P.Count());
-  P.Dec; put (P.Count());
-  P.Inc; put (P.Count());
-  P.Inc; put (P.Count());
-  P.Dec; put (P.Count());
-  P.Inc; put (P.Count());
-  P.Inc; put (P.Count());
+  P.Init(); put (P.Count());
+  P.Inc(); put (P.Count());
+  P.Inc(); put (P.Count());
+  P.Dec(); put (P.Count());
+  P.Inc(); put (P.Count());
+  P.Inc(); put (P.Count());
+  P.Dec(); put (P.Count());
+  P.Inc(); put (P.Count());
+  P.Inc(); put (P.Count());
 end prog14;
 

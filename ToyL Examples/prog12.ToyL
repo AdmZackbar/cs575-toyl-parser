@@ -10,10 +10,10 @@ procedure prog12 is
     put (a); put (w);
   end F;
 
-  procedure G (p,q: in out integer);
+  procedure G (p,q: in out integer) is
     a,d: integer;
 
-    procedure H (r,s,t: in out integer);
+    procedure H (r,s,t: in out integer) is
     begin
       d:=5;
       F (c,r,s,t);

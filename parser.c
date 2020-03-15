@@ -592,9 +592,9 @@ static void statement()
         lExpr();
         if (check(OPAREN))
         {
-            printInfo("MoreStatement", "( RExprList ) ;");
+            printInfo("MoreStatement", "( OptRExprList ) ;");
             advance();
-            rExprList();
+            optRExprList();
             match(CPAREN);
             match(SEMICOLON);
         }
@@ -937,7 +937,7 @@ static void rExpr7()
         }
         else if (check(MODULUS))
         {
-            printInfo("MoreRExpr7", "% RExpr7");
+            printInfo("MoreRExpr7", "%% RExpr7");
             advance();
             rExpr7();
         }
@@ -959,9 +959,9 @@ static void unary()
         if (check(OPAREN))
         {
             depth++;
-            printInfo("MoreUnary", "( rExprList )");
+            printInfo("MoreUnary", "( OptRExprList )");
             advance();
-            rExprList();
+            optRExprList();
             match(CPAREN);
             depth--;
         }
