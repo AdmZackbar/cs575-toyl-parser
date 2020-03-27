@@ -304,7 +304,7 @@ static void optMode()
             printInfo("OptMode", "IN");
         }
     }
-    if (check(OUT))
+    else if (check(OUT))
     {
         printInfo("OptMode", "OUT");
         advance();
@@ -644,6 +644,7 @@ static void elsifList()
     {
         depth++;
         printInfo("MoreElsifList", "ElsifList");
+        elsifList();
         depth--;
     }
 	else
@@ -937,7 +938,7 @@ static void rExpr7()
         }
         else if (check(MODULUS))
         {
-            printInfo("MoreRExpr7", "%% RExpr7");
+            printInfo("MoreRExpr7", "% RExpr7");
             advance();
             rExpr7();
         }

@@ -1,0 +1,41 @@
+procedure test is
+begin
+    /* Test left expressions */
+    hello();
+    hello(true);
+    hello(true, 1);
+    myPackage.hi();
+    myArray[42]();
+    myArray[20][10].myVar();
+    x := 0;
+    y.z := 0;
+    a.b[1] := 0;
+
+    /* Test right expressions */
+    x := 0;
+    x := true;
+    x := myVar;
+    x := expand();
+    x := expand(2+4);
+    x := 0+1*3;
+    x := (d);
+    x := (((f)));
+    x := (s+2)/4 + p%3;
+    x := not myBool and myVar = 2;
+    x := 0 <= 23 or -5 > 2;
+    x := y < 2 and z >= 1 and z <> 3;
+    x := if x <> 2 then
+        2
+    else
+        3
+    end if;
+    x := if x < 4 then
+        f+4-23/2
+    elsif x < 3 then
+        x+1-myCall()
+    elsif x > 5 then
+        myVar
+    else
+        0
+    end if;
+end test;

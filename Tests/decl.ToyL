@@ -1,0 +1,38 @@
+procedure test is
+    /* Test types */
+    type myType;
+    type newType is myTypeID;
+    type arrayType is array[0..1] of integer;
+    type recordType is record
+        x : integer;
+        i,j : myType;
+    end record;
+
+    /* Test var declarations (also tested above in type decl) */
+    y,z : boolean;
+
+    /* Test procedures (tested in proc.ToyL) */
+    procedure otherProc;
+
+    /* Test functions */
+    function myFunc return integer;
+    function otherFunc(a : myType) return boolean;
+    function bigFunc(b : in boolean) return integer is
+        type otherType;
+    begin
+        null;
+    end bigFunc;
+
+    /* Test packages */
+    package emptyPackage is
+    private
+    end emptyPackage;
+    package myPackage is
+        type typeOne;
+    private
+        type typeTwo;
+        p,q : typeOne;
+    end myPackage;
+begin
+    null;
+end test;

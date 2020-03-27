@@ -1,0 +1,21 @@
+procedure test is
+    /* Test forward declared procedures */
+    procedure forwardDeclared;
+    procedure forwardDeclForm (i:integer);
+    
+    /* Test formals in full procedures as well as
+     * types of declarations (tested more in decl.ToyL) */
+    procedure full (j:in boolean; k:out myType; l: in out integer) is
+        x,y,x : integer;
+        type newType;
+        function myFunc return myType;
+        package myPackage is
+            private
+        end myPackage;
+    begin
+        null;
+        return;
+    end full;
+begin
+    null;
+end test;

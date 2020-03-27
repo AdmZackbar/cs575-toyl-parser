@@ -1,0 +1,46 @@
+procedure test is
+begin
+    /* Test short statements */
+    null;
+    return;
+    return 0;
+
+    /* Test if statements */
+    if x then
+        null;
+    end if;
+    if y then
+        null;
+    elsif z then
+        null;
+    elsif a then
+        null;
+    end if;
+    if b then
+        null;
+    elsif c then
+        null;
+    else
+        null;
+    end if;
+    if d then
+        null;
+    else
+        null;
+    end if;
+
+    /* Test while loops */
+    while myVar
+    loop
+        null;
+    end loop;
+
+    /* Test function calls */
+    temp(x,y,z);
+    r.print(d);
+    test();
+    
+    /* Test assignment */
+    x := 5;
+    y[1] := 1+2;
+end test;
