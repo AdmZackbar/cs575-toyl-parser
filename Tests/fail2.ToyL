@@ -1,0 +1,5 @@
+procedure test is
+    x := 2; /* Only declarations allowed here, no statements */
+begin
+    hello();
+end test;

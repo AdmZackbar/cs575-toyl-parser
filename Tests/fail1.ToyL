@@ -1,0 +1,4 @@
+procedure test is
+begin
+    x := (x+2)-2); /* Extra parenthesis */
+end test;

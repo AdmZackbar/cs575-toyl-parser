@@ -1,0 +1,5 @@
+procedure test is
+begin
+    hello()     /* Missing a semicolon */
+    hello(true);
+end test;

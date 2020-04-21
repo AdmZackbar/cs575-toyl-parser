@@ -99,7 +99,7 @@ static void match(char *type)
     if(check(type))
         return advance();
         
-    printf("SYNTAX ERROR: expected %s got %s(%s)\n", type, current, getTokenString(l));
+    printf("SYNTAX ERROR: expected %s got %s\n", type, current);
     exit(-2);
 }
 static void parse(char *filename)
