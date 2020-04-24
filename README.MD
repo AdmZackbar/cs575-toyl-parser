@@ -16,5 +16,3 @@ Use the command 'make clean' to remove all built files (executable, object files
 Notes:
 Given test cases are in the directory 'Examples'
 My created test cases are in the directory 'Tests'
-Correct output files are in the directory 'Output'
-'make test' does not work well in its current state, one should avoid using it right now.
