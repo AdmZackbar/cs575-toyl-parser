@@ -1,0 +1,11 @@
+Program --> Procedure
+ Procedure --> PROCEDURE ID OptFormalList MoreProcedure
+  OptFormalList --> empty
+  MoreProcedure --> IS DeclList BEGIN StmtList END ID ;
+   DeclList --> empty
+   StmtList --> Statement MoreStmtList
+    Statement --> LExpr MoreStatement
+     LExpr --> ID
+    MoreStatement --> ( OptRExprList ) ;
+     OptRExprList --> empty
+SYNTAX ERROR: expected semicolon got identifier

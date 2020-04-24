@@ -34,13 +34,24 @@ begin
     loop
         null;
     end loop;
+    while myVar2
+    loop
+        x := x + 1;
+        myVar2 := x - y;
+        if x > myVar2 then
+            x := myVar2 - 1;
+        end if;
+    end loop;
 
     /* Test function calls */
     temp(x,y,z);
     r.print(d);
     test();
+    a := test(x(1), 2, a);
     
     /* Test assignment */
     x := 5;
     y[1] := 1+2;
+    x.y := 1;
+    x.y.z[j.p] := z.w[1];
 end test;

@@ -1,0 +1,86 @@
+Program --> Procedure
+ Procedure --> PROCEDURE ID OptFormalList MoreProcedure
+  OptFormalList --> empty
+  MoreProcedure --> IS DeclList BEGIN StmtList END ID ;
+   DeclList --> Declaration DeclList
+    Declaration --> Procedure
+     Procedure --> PROCEDURE ID OptFormalList MoreProcedure
+      OptFormalList --> empty
+      ProcedureEnd --> SEMICOLON
+    DeclList --> Declaration DeclList
+     Declaration --> Procedure
+      Procedure --> PROCEDURE ID OptFormalList MoreProcedure
+       OptFormalList --> ( FormalList )
+        FormalList --> Formal MoreFormalList
+         Formal --> IdList : OptMode TypeID
+          IdList --> ID MoreIdList
+           MoreIdList --> empty
+          OptMode --> empty
+          TypeID --> INTEGER
+         MoreFormalList --> empty
+       ProcedureEnd --> SEMICOLON
+     DeclList --> Declaration DeclList
+      Declaration --> Procedure
+       Procedure --> PROCEDURE ID OptFormalList MoreProcedure
+        OptFormalList --> ( FormalList )
+         FormalList --> Formal MoreFormalList
+          Formal --> IdList : OptMode TypeID
+           IdList --> ID MoreIdList
+            MoreIdList --> empty
+           OptMode --> IN
+           TypeID --> BOOLEAN
+          MoreFormalList --> ; FormalList
+           FormalList --> Formal MoreFormalList
+            Formal --> IdList : OptMode TypeID
+             IdList --> ID MoreIdList
+              MoreIdList --> empty
+             OptMode --> OUT
+             TypeID --> LExpr
+              LExpr --> ID
+            MoreFormalList --> ; FormalList
+             FormalList --> Formal MoreFormalList
+              Formal --> IdList : OptMode TypeID
+               IdList --> ID MoreIdList
+                MoreIdList --> empty
+               OptMode --> IN OUT
+               TypeID --> INTEGER
+              MoreFormalList --> empty
+        MoreProcedure --> IS DeclList BEGIN StmtList END ID ;
+         DeclList --> Declaration DeclList
+          Declaration --> VarDecl
+           VarDecl --> IdList : TypeDesc ;
+            IdList --> ID MoreIdList
+             MoreIdList --> , idList
+              IdList --> ID MoreIdList
+               MoreIdList --> , idList
+                IdList --> ID MoreIdList
+                 MoreIdList --> empty
+            TypeDesc --> TypeID
+             TypeID --> INTEGER
+          DeclList --> Declaration DeclList
+           Declaration --> TypeDecl
+            TypeDecl --> TYPE ID MoreTypeDecl
+             MoreTypeDecl --> ;
+           DeclList --> Declaration DeclList
+            Declaration --> Function
+             Function --> FUNCTION ID OptFormalList RETURN TypeID MoreFunction
+              OptFormalList --> empty
+              TypeID --> LExpr
+               LExpr --> ID
+              MoreFunction --> ;
+            DeclList --> Declaration DeclList
+             Declaration --> Package
+              Package --> PACKAGE ID IS DeclList PRIVATE DeclList END ID ;
+               DeclList --> empty
+               DeclList --> empty
+             DeclList --> empty
+         StmtList --> Statement MoreStmtList
+          Statement --> NULL ;
+          MoreStmtList --> StmtList
+           StmtList --> Statement MoreStmtList
+            Statement --> RETURN ;
+            MoreStmtList --> empty
+      DeclList --> empty
+   StmtList --> Statement MoreStmtList
+    Statement --> NULL ;
+    MoreStmtList --> empty

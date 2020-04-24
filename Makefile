@@ -49,4 +49,4 @@ test : parser
 	./parser ./ToyL\ Examples/prog15.ToyL >> output.txt
 
 clean :
-	rm -f $(OBJ) parser output.txt
+	rm -f $(OBJ) parser

@@ -10,6 +10,8 @@ procedure test is
 
     /* Test var declarations (also tested above in type decl) */
     y,z : boolean;
+    d : newType;
+    a,b,c,d,e,f : string;
 
     /* Test procedures (tested in proc.ToyL) */
     procedure otherProc;
@@ -17,7 +19,7 @@ procedure test is
     /* Test functions */
     function myFunc return integer;
     function otherFunc(a : myType) return boolean;
-    function bigFunc(b : in boolean) return integer is
+    function bigFunc(b : in boolean; c : out integer) return integer is
         type otherType;
     begin
         null;

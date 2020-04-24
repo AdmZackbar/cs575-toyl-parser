@@ -1,0 +1,10 @@
+Program --> Procedure
+ Procedure --> PROCEDURE ID OptFormalList MoreProcedure
+  OptFormalList --> empty
+  MoreProcedure --> IS DeclList BEGIN StmtList END ID ;
+   DeclList --> Declaration DeclList
+    Declaration --> VarDecl
+     VarDecl --> IdList : TypeDesc ;
+      IdList --> ID MoreIdList
+       MoreIdList --> empty
+SYNTAX ERROR: expected colon got assignment

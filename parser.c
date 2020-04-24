@@ -102,6 +102,7 @@ static void match(char *type)
     printf("SYNTAX ERROR: expected %s got %s\n", type, current);
     exit(-2);
 }
+// Would return an AST if contextual analysis were needed
 static void parse(char *filename)
 {
     FILE *fp = fopen(filename, "r");
